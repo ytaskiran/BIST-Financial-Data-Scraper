@@ -1,5 +1,6 @@
 from scraper import setupWebDriver, getKarlilikData, getCarpanlarData, initializeDataframe
 from selenium.webdriver.common.by import By
+import argparse
 import time
 
 
@@ -22,7 +23,11 @@ bist30_tickers = ["AKSEN", "ARCLK", "ASELS", "BIMAS", "DOHOL", "EKGYO",
 
 
 
-def main():
+def main(path, bist):
+    if (bist == 100):
+        print("BIST 100 is not yet supported")
+        return
+        
     karlilik_df = initializeDataframe(karlilik_features)
     carpanlar_df = initializeDataframe(carpanlar_features)
 
@@ -67,8 +72,16 @@ def main():
             print(f"Ticker: {ticker}, last quarter fetched: {last_quarter}")
         print(f"Scraping data for the ticker {ticker} is finished.\n\n")
 
-    karlilik_df.to_csv("karlilik_bist30.csv")
-    carpanlar_df.to_csv("carpanlar_bist30.csv")
+    karlilik_df.to_csv(path + "karlilik_bist30.csv")
+    carpanlar_df.to_csv(path + "carpanlar_bist30.csv")
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(prog = 'Financial Data Scraper',
+                                     description = 'Scraping fundamental financial data of BIST \
+                                                    companies from HalkYatırım Skorkart ',
+                                     epilog = 'Developed by Yusuf')
+    parser.add_argument('-p', '--path', help="Path to save the data", type=str)      
+    parser.add_argument('-b', '--bist', help="30 or 100 for BIST 30 or BIST 100 to scrape", type=int)
+    args = parser.parse_args()
+
+    main(args.path, args.bist)
